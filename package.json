@@ -1,7 +1,7 @@
 {
   "name": "@actovision/facebook-conversion-api-nextjs",
   "version": "0.1.0",
-  "description": "Next.js (App Router + Pages Router) integration for Meta Conversions API — server handlers, client fbEvent, Meta Pixel script & provider.",
+  "description": "Next.js integration for Meta's Conversions API (CAPI). App Router + Pages Router route handlers, Meta Pixel script loader, browser fbEvent() helper with automatic Pixel + CAPI deduplication, FacebookCapiClient with full parameter coverage (user_data, app_data, referrer_url, LDU/CCPA, offline events). Graph API v22.0, zero runtime dependencies.",
   "keywords": [
     "facebook",
     "meta",
