@@ -1,14 +1,14 @@
 import {
-  CapiClient,
+  FacebookCapiClient,
   CapiError,
   type ActionSource,
-  type CapiClientOptions,
+  type FacebookCapiClientOptions,
 } from '../capi/index.js'
 import { buildServerEvent } from './build-event.js'
 import { signalsFromNodeRequest } from './extract-request.js'
 import type { FbEventPayload } from '../shared/types.js'
 
-export interface CreateApiHandlerOptions extends CapiClientOptions {
+export interface CreateApiHandlerOptions extends FacebookCapiClientOptions {
   actionSource?: ActionSource
   transformEvent?: (event: ReturnType<typeof buildServerEvent>) => ReturnType<typeof buildServerEvent>
   debug?: boolean
@@ -48,7 +48,7 @@ export function createFbEventsApiHandler(
   options: CreateApiHandlerOptions,
 ): FbEventsApiHandler {
   const { actionSource = 'website', transformEvent, debug = false, ...clientOptions } = options
-  const client = new CapiClient(clientOptions)
+  const client = new FacebookCapiClient(clientOptions)
 
   return async function handler(req, res) {
     if (req.method !== 'POST') {

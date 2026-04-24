@@ -8,11 +8,13 @@ declare global {
   }
 }
 
-export interface FbEventOptions extends Omit<FbEventPayload, 'eventId' | 'eventSourceUrl'> {
+export interface FbEventOptions extends Omit<FbEventPayload, 'eventId' | 'eventSourceUrl' | 'referrerUrl'> {
   /** If omitted, a random eventId is generated. */
   eventId?: string
   /** If omitted, `window.location.href` is used. */
   eventSourceUrl?: string
+  /** If omitted, `document.referrer` is used. */
+  referrerUrl?: string
   /** Also fire the Meta Pixel (`window.fbq`) on the client. Default true. */
   enableStandardPixel?: boolean
   /** Delay (ms) between firing the pixel and POSTing to the server, to let
@@ -43,6 +45,7 @@ export async function fbEvent(options: FbEventOptions): Promise<FbEventResult> {
   const {
     eventId: providedEventId,
     eventSourceUrl,
+    referrerUrl: providedReferrer,
     enableStandardPixel = true,
     serverSideDelayMs = 250,
     serverPath = '/api/fb-events',
@@ -51,6 +54,9 @@ export async function fbEvent(options: FbEventOptions): Promise<FbEventResult> {
 
   const eventId = providedEventId ?? generateEventId()
   const url = typeof window !== 'undefined' ? (eventSourceUrl ?? window.location.href) : eventSourceUrl
+  const referrerUrl =
+    providedReferrer ??
+    (typeof document !== 'undefined' && document.referrer ? document.referrer : undefined)
 
   if (enableStandardPixel && typeof window !== 'undefined' && typeof window.fbq === 'function') {
     const pixelPayload: Record<string, unknown> = {}
@@ -64,6 +70,8 @@ export async function fbEvent(options: FbEventOptions): Promise<FbEventResult> {
     if (rest.order_id) pixelPayload.order_id = rest.order_id
     if (rest.num_items !== undefined) pixelPayload.num_items = rest.num_items
     if (rest.search_string) pixelPayload.search_string = rest.search_string
+    if (rest.status) pixelPayload.status = rest.status
+    if (rest.delivery_category) pixelPayload.delivery_category = rest.delivery_category
 
     window.fbq('track', rest.eventName, pixelPayload, { eventID: eventId })
   }
@@ -76,6 +84,7 @@ export async function fbEvent(options: FbEventOptions): Promise<FbEventResult> {
     ...rest,
     eventId,
     eventSourceUrl: url,
+    ...(referrerUrl ? { referrerUrl } : {}),
   }
 
   let response: Response | undefined

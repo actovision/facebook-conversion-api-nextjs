@@ -1,14 +1,14 @@
 import {
-  CapiClient,
+  FacebookCapiClient,
   CapiError,
   type ActionSource,
-  type CapiClientOptions,
+  type FacebookCapiClientOptions,
 } from '../capi/index.js'
 import { buildServerEvent } from './build-event.js'
 import { signalsFromRequest } from './extract-request.js'
 import type { FbEventPayload } from '../shared/types.js'
 
-export interface CreateRouteHandlerOptions extends CapiClientOptions {
+export interface CreateRouteHandlerOptions extends FacebookCapiClientOptions {
   /** Default action_source. Defaults to `'website'`. */
   actionSource?: ActionSource
   /**
@@ -37,7 +37,7 @@ export interface RouteHandler {
  */
 export function createFbEventsRouteHandler(options: CreateRouteHandlerOptions): RouteHandler {
   const { actionSource = 'website', transformEvent, debug = false, ...clientOptions } = options
-  const client = new CapiClient(clientOptions)
+  const client = new FacebookCapiClient(clientOptions)
 
   return {
     async POST(req: Request): Promise<Response> {

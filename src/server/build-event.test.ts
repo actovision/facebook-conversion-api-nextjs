@@ -18,6 +18,7 @@ describe('buildServerEvent', () => {
         clientUserAgent: 'UA',
         fbp: 'fb.1.x.y',
         fbc: undefined,
+        referrerUrl: 'https://google.com/',
       },
     )
 
@@ -31,12 +32,67 @@ describe('buildServerEvent', () => {
     expect(event.customData?.value).toBe(99.99)
     expect(event.customData?.currency).toBe('USD')
     expect(event.customData?.contents).toHaveLength(1)
+    expect(event.referrerUrl).toBe('https://google.com/')
+  })
+
+  it('prefers payload referrerUrl over the Referer header', () => {
+    const event = buildServerEvent(
+      { eventName: 'PageView', eventId: 'e1', referrerUrl: 'https://client-supplied.test/' },
+      {
+        clientIpAddress: undefined,
+        clientUserAgent: undefined,
+        fbp: undefined,
+        fbc: undefined,
+        referrerUrl: 'https://from-header.test/',
+      },
+    )
+    expect(event.referrerUrl).toBe('https://client-supplied.test/')
+  })
+
+  it('threads messaging / app identity user-data fields', () => {
+    const event = buildServerEvent(
+      {
+        eventName: 'Lead',
+        eventId: 'e1',
+        madid: 'idfa-123',
+        anonId: 'anon-1',
+        pageId: 'page-1',
+        pageScopedUserId: 'psid-1',
+        ctwaClid: 'ctwa-1',
+        igAccountId: 'ig-1',
+        igSid: 'igsid-1',
+      },
+      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined, referrerUrl: undefined },
+    )
+    expect(event.userData?.madid).toBe('idfa-123')
+    expect(event.userData?.anonId).toBe('anon-1')
+    expect(event.userData?.pageId).toBe('page-1')
+    expect(event.userData?.pageScopedUserId).toBe('psid-1')
+    expect(event.userData?.ctwaClid).toBe('ctwa-1')
+    expect(event.userData?.igAccountId).toBe('ig-1')
+    expect(event.userData?.igSid).toBe('igsid-1')
+  })
+
+  it('passes through appData and top-level custom_data fields', () => {
+    const event = buildServerEvent(
+      {
+        eventName: 'Purchase',
+        eventId: 'e1',
+        status: 'completed',
+        delivery_category: 'home_delivery',
+        appData: { advertiserTrackingEnabled: 1, extinfo: ['i2', 'com.example'] },
+      },
+      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined, referrerUrl: undefined },
+    )
+    expect(event.customData?.status).toBe('completed')
+    expect(event.customData?.delivery_category).toBe('home_delivery')
+    expect(event.appData?.advertiserTrackingEnabled).toBe(1)
   })
 
   it('omits customData entirely when nothing is set', () => {
     const event = buildServerEvent(
       { eventName: 'PageView', eventId: 'e1' },
-      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined },
+      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined, referrerUrl: undefined },
     )
     expect(event.customData).toBeUndefined()
   })
@@ -49,7 +105,7 @@ describe('buildServerEvent', () => {
         value: 10,
         customData: { lead_score: 'high' },
       },
-      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined },
+      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined, referrerUrl: undefined },
     )
     expect(event.customData).toEqual({ value: 10, lead_score: 'high' })
   })
@@ -57,7 +113,7 @@ describe('buildServerEvent', () => {
   it('respects an explicit actionSource override', () => {
     const event = buildServerEvent(
       { eventName: 'Contact', eventId: 'e1' },
-      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined },
+      { clientIpAddress: undefined, clientUserAgent: undefined, fbp: undefined, fbc: undefined, referrerUrl: undefined },
       'app',
     )
     expect(event.actionSource).toBe('app')

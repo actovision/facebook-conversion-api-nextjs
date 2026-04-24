@@ -9,7 +9,7 @@ import type { RequestSignals } from './extract-request.js'
 
 /**
  * Turn the flat wire payload from the browser + the request-derived signals
- * into the structured `ServerEvent` the core `CapiClient` expects.
+ * into the structured `ServerEvent` the core `FacebookCapiClient` expects.
  */
 export function buildServerEvent(
   payload: FbEventPayload,
@@ -32,6 +32,13 @@ export function buildServerEvent(
     clientUserAgent: signals.clientUserAgent,
     fbp: signals.fbp,
     fbc: signals.fbc,
+    madid: payload.madid,
+    anonId: payload.anonId,
+    pageId: payload.pageId,
+    pageScopedUserId: payload.pageScopedUserId,
+    ctwaClid: payload.ctwaClid,
+    igAccountId: payload.igAccountId,
+    igSid: payload.igSid,
   }
 
   const customData: CustomData = {
@@ -46,6 +53,8 @@ export function buildServerEvent(
     ...(payload.num_items !== undefined ? { num_items: payload.num_items } : {}),
     ...(payload.predicted_ltv !== undefined ? { predicted_ltv: payload.predicted_ltv } : {}),
     ...(payload.search_string ? { search_string: payload.search_string } : {}),
+    ...(payload.status ? { status: payload.status } : {}),
+    ...(payload.delivery_category ? { delivery_category: payload.delivery_category } : {}),
     ...payload.customData,
   }
 
@@ -53,8 +62,10 @@ export function buildServerEvent(
     eventName: payload.eventName,
     eventId: payload.eventId,
     eventSourceUrl: payload.eventSourceUrl,
+    referrerUrl: payload.referrerUrl ?? signals.referrerUrl,
     actionSource,
     userData,
     customData: Object.keys(customData).length > 0 ? customData : undefined,
+    appData: payload.appData,
   }
 }

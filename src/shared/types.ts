@@ -1,4 +1,4 @@
-import type { EventName } from '../capi/index.js'
+import type { AppData, EventName } from '../capi/index.js'
 
 /**
  * Wire shape for POSTs from the browser `fbEvent()` helper to the server
@@ -9,6 +9,7 @@ export interface FbEventPayload {
   eventName: EventName
   eventId: string
   eventSourceUrl?: string
+  referrerUrl?: string
   emails?: string[]
   phones?: string[]
   firstName?: string
@@ -20,9 +21,22 @@ export interface FbEventPayload {
   city?: string
   zip?: string
   externalId?: string | string[]
+  /** Messaging / app identity signals. All sent unhashed. */
+  madid?: string
+  anonId?: string
+  pageId?: string
+  pageScopedUserId?: string
+  ctwaClid?: string
+  igAccountId?: string
+  igSid?: string
   value?: number
   currency?: string
-  contents?: Array<{ id: string; quantity?: number; item_price?: number }>
+  contents?: Array<{
+    id: string
+    quantity?: number
+    item_price?: number
+    delivery_category?: 'in_store' | 'curbside' | 'home_delivery'
+  }>
   content_ids?: Array<string | number>
   content_type?: 'product' | 'product_group'
   content_name?: string
@@ -31,8 +45,12 @@ export interface FbEventPayload {
   num_items?: number
   predicted_ltv?: number
   search_string?: string
+  status?: string
+  delivery_category?: 'in_store' | 'curbside' | 'home_delivery'
   /** Arbitrary custom data not covered above — merged onto custom_data. */
   customData?: Record<string, unknown>
+  /** `app_data` for app-source events. */
+  appData?: AppData
   /** Passes through to Meta's Test Events tab. */
   testEventCode?: string
 }
