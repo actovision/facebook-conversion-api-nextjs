@@ -1,6 +1,6 @@
 import {
   FacebookCapiClient,
-  CapiError,
+  FacebookCapiError,
   type ActionSource,
   type FacebookCapiClientOptions,
 } from '../capi/index.js'
@@ -69,7 +69,7 @@ export function createFbEventsRouteHandler(options: CreateRouteHandlerOptions): 
           200,
         )
       } catch (err) {
-        if (err instanceof CapiError) {
+        if (err instanceof FacebookCapiError) {
           return json(
             { success: false, error: err.message, fbtraceId: err.fbtraceId },
             err.status,

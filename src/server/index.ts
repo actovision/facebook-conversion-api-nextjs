@@ -7,15 +7,15 @@ export type { RequestSignals } from './extract-request.js'
 export { buildServerEvent } from './build-event.js'
 export type { FbEventPayload } from '../shared/types.js'
 
-// Re-export the CAPI core so users can reach FacebookCapiClient / CapiError / types
+// Re-export the CAPI core so users can reach FacebookCapiClient / FacebookCapiError / types
 // without installing another package.
-export { FacebookCapiClient, CapiError, CapiNetworkError, sha256 } from '../capi/index.js'
+export { FacebookCapiClient, FacebookCapiError, FacebookCapiNetworkError, sha256 } from '../capi/index.js'
 export type {
   ActionSource,
   AppData,
   FacebookCapiClientOptions,
-  CapiErrorBody,
-  CapiResponse,
+  FacebookCapiErrorBody,
+  FacebookCapiResponse,
   Content,
   CustomData,
   EventName,

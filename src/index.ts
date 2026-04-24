@@ -16,8 +16,8 @@ export {
   signalsFromNodeRequest,
   parseFbCookies,
   FacebookCapiClient,
-  CapiError,
-  CapiNetworkError,
+  FacebookCapiError,
+  FacebookCapiNetworkError,
   sha256,
 } from './server/index.js'
 export type {
@@ -30,8 +30,8 @@ export type {
   ActionSource,
   AppData,
   FacebookCapiClientOptions,
-  CapiErrorBody,
-  CapiResponse,
+  FacebookCapiErrorBody,
+  FacebookCapiResponse,
   Content,
   CustomData,
   EventName,

@@ -1,6 +1,6 @@
 import {
   FacebookCapiClient,
-  CapiError,
+  FacebookCapiError,
   type ActionSource,
   type FacebookCapiClientOptions,
 } from '../capi/index.js'
@@ -77,7 +77,7 @@ export function createFbEventsApiHandler(
       )
       res.status(200).json(debug ? { success: true, response, event } : { success: true })
     } catch (err) {
-      if (err instanceof CapiError) {
+      if (err instanceof FacebookCapiError) {
         res
           .status(err.status)
           .json({ success: false, error: err.message, fbtraceId: err.fbtraceId })
