@@ -69,6 +69,8 @@ export const { POST } = createFbEventsRouteHandler({
 })
 ```
 
+`/api/fb-events` is a dedicated, isolated route — it won't conflict with your other API routes since each `route.ts` file in the App Router is scoped to its own path. Pick any path you like (e.g. `app/api/conversions/route.ts`); just pass the matching `serverPath` to `fbEvent()` on the client so the helper POSTs to the right place.
+
 **3. Fire events from client components**
 
 ```tsx
